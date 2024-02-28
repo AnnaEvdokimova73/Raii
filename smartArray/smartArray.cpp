@@ -10,10 +10,9 @@ public:
 
 	void addElement(int value)
 	{
-		// static int curIndex = 0;
 		if (curIndex >= _size)
 		{
-			throw std::exception("Error! Array is full");
+			throw std::runtime_error("Error! Array is full");
 		}
 		arr[curIndex] = value;
 		++curIndex;
@@ -21,12 +20,16 @@ public:
 
 	int getElement(int index)
 	{
-		if (index >= _size)
+		if (index < 0 || index >= curIndex)
 		{
-			throw std::exception("Error! Index out of bounds");
+			// throw std::exception("Error! Index out of bounds");
+			throw std::runtime_error("Error! Index out of bounds");
 		}
 		return arr[index];
 	}
+
+	SmartArray(const SmartArray&) = delete; // запрет конструктора присваивания
+	SmartArray& operator=(const SmartArray&) = delete; // запрет копирования через оператор =
 
 	~SmartArray() 
 	{
@@ -50,7 +53,7 @@ int main()
 		arr.addElement(15);
 		std::cout << arr.getElement(1) << std::endl;
 	}
-	catch (const std::exception& ex) {
+	catch (const std::runtime_error& ex) {
 		std::cout << ex.what() << std::endl;
 	}
 }

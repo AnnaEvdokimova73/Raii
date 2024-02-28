@@ -8,53 +8,54 @@ public:
 		arr = new int[_size];
 	}
 
-	void addElement(int value)
+	SmartArray(const SmartArray& rightArr) // конструктор копирования
 	{
-		if (curIndex >= _size)
-		{
-			throw std::exception("Error! Array is full");
-		}
-		arr[curIndex] = value;
-		++curIndex;
-	}
-
-	int getElement(int index)
-	{
-		if (index >= _size)
-		{
-			throw std::exception("Error! Index out of bounds");
-		}
-		return arr[index];
-	}
-
-	void operator=(SmartArray& rightArr)
-	{
-		delete[] arr;
 		_size = rightArr._size;
+		_curIndex = rightArr._curIndex;
 		arr = new int[_size];
 
 		for (int i = 0; i < _size; ++i)
 		{
-			arr[i] = rightArr.getElement(i);
+			arr[i] = rightArr.arr[i];
 		}
 	}
 
-	/*void operator=(SmartArray& rightArr)
+	void addElement(int value)
 	{
-		int size = 0;
-		if (_size <= rightArr._size)
+		if (_curIndex >= _size)
 		{
-			size = _size;
+			throw std::runtime_error("Error! Array is full");
 		}
-		else
+		arr[_curIndex] = value;
+		++_curIndex;
+	}
+
+	int getElement(int index)
+	{
+		if (index < 0 || index >= _curIndex)
 		{
-			size = rightArr._size;
+			// throw std::exception("Error! Index out of bounds"); // только для Windows
+			throw std::runtime_error("Error! Index out of bounds");
 		}
-		for (int i = 0; i < size; ++i)
+		return arr[index];
+	}
+
+	SmartArray& operator=(const SmartArray& rightArr)
+	{
+		if (this != &rightArr) // если указатели на объект не совпадают, тогда производим копирование
 		{
-			arr[i] = rightArr.getElement(i);
+			delete[] arr;
+			_size = rightArr._size;
+			_curIndex = rightArr._curIndex;
+			arr = new int[_size];
+
+			for (int i = 0; i < _size; ++i)
+			{
+				arr[i] = rightArr.arr[i];
+			}
 		}
-	}*/
+		return *this;
+	}
 
 	~SmartArray()
 	{
@@ -64,7 +65,7 @@ public:
 private:
 	int* arr;
 	int _size;
-	int curIndex = 0;
+	int _curIndex = 0;
 };
 
 int main()
@@ -86,7 +87,7 @@ int main()
 		std::cout << arr.getElement(1) << std::endl;
 		std::cout << arr.getElement(2) << std::endl;
 	}
-	catch (const std::exception& ex) {
+	catch (const std::runtime_error& ex) {
 		std::cout << ex.what() << std::endl;
 	}
 }
